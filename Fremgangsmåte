@@ -1,0 +1,64 @@
+# Koble en nettside til AWS – slik fungerer det 🌐
+
+Her er en oversikt over de viktigste komponentene og hvordan de henger sammen:
+
+---
+
+## De tre hoveddelene
+
+### 1. Domene (f.eks. `maia.no`)
+Du kjøper et domenenavn hos en registrar – f.eks. **Domeneshop**, **GoDaddy**, eller direkte via **AWS Route 53**. Domenet er bare adressen folk skriver inn i nettleseren.
+
+### 2. DNS – telefonkatalogen
+DNS (Domain Name System) oversetter domenenavnet ditt til en IP-adresse. Når noen skriver `maia.no`, slår DNS opp "hvilken server skal jeg sende folk til?" og peker dem dit.
+
+- Kjøper du domenet hos Domeneshop men hostet på AWS, må du **endre DNS-serverne** (nameservers) hos Domeneshop til å peke mot AWS Route 53.
+- Kjøper du domenet direkte i Route 53 er dette allerede satt opp.
+
+### 3. AWS – der nettsiden faktisk bor
+
+Her er de vanligste AWS-tjenestene for hosting:
+
+| Tjeneste | Hva det er | Passer til |
+|---|---|---|
+| **S3** | Fillagring | Statiske nettsider (HTML/CSS/JS) |
+| **CloudFront** | CDN (innholdsleveringsnettverk) | Raskere lasting globalt + HTTPS |
+| **EC2** | Virtuell server | Dynamiske apper, backend |
+| **Elastic Beanstalk** | Managed app-hosting | Node.js, Python, osv. |
+| **Amplify** | Full-stack hosting | Moderne web-apper, enklest å starte med |
+
+---
+
+## Flyten fra bruker til nettside
+
+```
+Bruker skriver maia.no
+        ↓
+DNS (Route 53) slår opp IP-adressen
+        ↓
+CloudFront (CDN) tar imot forespørselen
+        ↓
+Henter filer fra S3 (eller EC2 / Amplify)
+        ↓
+Nettsiden vises i nettleseren
+```
+
+---
+
+## Anbefalt oppsett for deg som starter
+
+Siden dette er et læringsprosjekt, vil jeg anbefale denne stacken – den er enkel, billig og lærerik:
+
+1. **Kjøp domene** – Domeneshop (billigst i Norge) eller Route 53
+2. **Lag nettsiden** – Start med enkel HTML/CSS, eller React
+3. **Last opp til S3** – Aktiver "Static website hosting"
+4. **Sett opp CloudFront** – For HTTPS og raskere lasting
+5. **Koble DNS i Route 53** – Pek domenet mot CloudFront
+
+**Kostnad:** Nesten gratis i starten. S3 + CloudFront koster gjerne under $1/mnd for en liten nettside. Route 53 koster $0.50/mnd per hosted zone.
+
+---
+
+## Vil du gå videre?
+
+Hva tenker du å bygge – en statisk nettside (f.eks. portefølje/CV), eller noe med backend og database? Det avgjør hvilken AWS-arkitektur som passer best, og jeg kan lage en mer konkret steg-for-steg guide! 🚀
