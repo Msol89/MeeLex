@@ -17,7 +17,7 @@
     <main>
         <h1>Maia</h1>
         <p>Welcome to my web page</p>
-        <p>Dette er en test</p>
+        <p style="margin-bottom: 20px;">Dette er en test</p>
         
         <div id="weather-widget">
             <h2>Været i Bergen, Norge</h2>
@@ -34,6 +34,7 @@
                 const temp = current.temp_C;
                 const weatherDesc = current.weatherDesc[0].value;
                 const humidity = current.humidity;
+                const windspeedKmph = current.windspeedKmph;
                 
                 document.getElementById('weather-info').innerHTML = `
                     <p><strong>Temperatur:</strong> ${temp}°C</p>
