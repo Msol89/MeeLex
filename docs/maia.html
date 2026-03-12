@@ -40,6 +40,7 @@
                     <p><strong>Temperatur:</strong> ${temp}°C</p>
                     <p><strong>Vær:</strong> ${weatherDesc}</p>
                     <p><strong>Fuktighet:</strong> ${humidity}%</p>
+                    <p><strong>Vindhastighet:</strong> ${windspeedKmph} km/t</p>
                 `;
             } catch (error) {
                 document.getElementById('weather-info').innerHTML = 'Kunne ikke laste værdata. Prøv igjen senere.';
