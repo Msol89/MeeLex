@@ -18,6 +18,35 @@
         <h1>Maia</h1>
         <p>Welcome to my web page</p>
         <p>Dette er en test</p>
+        
+        <div id="weather-widget">
+            <h2>Været i Bergen, Norge</h2>
+            <div id="weather-info">Laster værdata...</div>
+        </div>
     </main>
+    
+    <script>
+        async function fetchWeather() {
+            try {
+                const response = await fetch('https://wttr.in/Bergen?format=j1');
+                const data = await response.json();
+                const current = data.current_condition[0];
+                const temp = current.temp_C;
+                const weatherDesc = current.weatherDesc[0].value;
+                const humidity = current.humidity;
+                
+                document.getElementById('weather-info').innerHTML = `
+                    <p><strong>Temperatur:</strong> ${temp}°C</p>
+                    <p><strong>Vær:</strong> ${weatherDesc}</p>
+                    <p><strong>Fuktighet:</strong> ${humidity}%</p>
+                `;
+            } catch (error) {
+                document.getElementById('weather-info').innerHTML = 'Kunne ikke laste værdata. Prøv igjen senere.';
+                console.error('Weather fetch error:', error);
+            }
+        }
+        
+        fetchWeather();
+    </script>
 </body>
 </html>
