@@ -108,7 +108,8 @@
             const title = input.value.trim();
             if (!title) return;
             const tickets = load();
-            tickets.push({ id: crypto.randomUUID(), title, status: "not_done", createdAt: new Date().toISOString(), completedAt: null });
+            const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
+            tickets.push({ id, title, status: "not_done", createdAt: new Date().toISOString(), completedAt: null });
             save(tickets); input.value = ""; render();
         });
         render();
