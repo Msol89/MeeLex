@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies - Meelex.no</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .todo-container { max-width: 500px; }
+        form { display: flex; gap: 8px; margin-bottom: 24px; }
+        input[type="text"] {
+            flex: 1; padding: 8px 12px;
+            border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+        }
+        .todo-btn {
+            padding: 8px 16px; border: none; border-radius: 6px;
+            background: #2563eb; color: #fff; font-size: 14px; cursor: pointer;
+        }
+        .todo-btn:hover { background: #1d4ed8; }
+        ul { list-style: none; padding: 0; }
+        li {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 0; border-bottom: 1px solid #eee;
+        }
+        li.done span { text-decoration: line-through; color: #999; }
+        .tick {
+            width: 28px; height: 28px; border: 2px solid #ccc;
+            border-radius: 6px; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 16px;
+        }
+        .tick:hover { border-color: #2563eb; }
+        li.done .tick { border-color: #22c55e; background: #22c55e; color: #fff; cursor: default; }
+        .title { flex: 1; }
+        .empty { color: #999; padding: 20px 0; }
+    </style>
+</head>
+<body>
+    <nav class="navigation-menu">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="maia.html">Maia</a></li>
+            <li><a href="erik.html">Erik</a></li>
+            <li><a href="eivind.html">Eivind</a></li>
+            <li><a href="movies.html">Movies</a></li>
+            <li><a href="shows.html">Shows</a></li>
+        </ul>
+    </nav>
+    <main>
+        <div class="todo-container">
+            <h1>Movies</h1>
+            <form id="create-form">
+                <label for="title-input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Movie title</label>
+                <input type="text" id="title-input" placeholder="Add a movie..." required>
+                <button type="submit" class="todo-btn">Add</button>
+            </form>
+            <ul id="ticket-list"></ul>
+        </div>
+    </main>
+    <script>
+        const STORAGE_KEY = "meelex-movies";
+        const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+
+        function load() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+            catch { return []; }
+        }
+        function save(tickets) { localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets)); }
+        function getTickets() {
+            const now = Date.now();
+            const tickets = load().filter(t => {
+                if (t.status === "done" && t.completedAt)
+                    return now - new Date(t.completedAt).getTime() < TWENTY_FOUR_HOURS_MS;
+                return true;
+            });
+            save(tickets);
+            return tickets;
+        }
+        function escapeHtml(str) {
+            const div = document.createElement("div");
+            div.textContent = str;
+            return div.innerHTML;
+        }
+        function render() {
+            const tickets = getTickets();
+            const list = document.getElementById("ticket-list");
+            if (tickets.length === 0) { list.innerHTML = '<li class="empty">No movies yet.</li>'; return; }
+            list.innerHTML = tickets.map(t => `
+                <li class="${t.status === 'done' ? 'done' : ''}">
+                    <div class="tick" role="button" aria-label="Mark watched"
+                        ${t.status === 'not_done' ? `onclick="markDone('${t.id}')"` : ''}>
+                        ${t.status === 'done' ? '✓' : ''}
+                    </div>
+                    <span class="title">${escapeHtml(t.title)}</span>
+                </li>`).join("");
+        }
+        function markDone(id) {
+            const tickets = load();
+            const ticket = tickets.find(t => t.id === id);
+            if (ticket && ticket.status === "not_done") {
+                ticket.status = "done";
+                ticket.completedAt = new Date().toISOString();
+                save(tickets); render();
+            }
+        }
+        document.getElementById("create-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const input = document.getElementById("title-input");
+            const title = input.value.trim();
+            if (!title) return;
+            const tickets = load();
+            tickets.push({ id: crypto.randomUUID(), title, status: "not_done", createdAt: new Date().toISOString(), completedAt: null });
+            save(tickets); input.value = ""; render();
+        });
+        render();
+    </script>
+</body>
+</html>
